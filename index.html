@@ -1,9 +1,23 @@
 <!DOCTYPE html>
 <html>
-<body>
-
-<h1>Hello Coursera</h1>
-<p>My first paragraph 3.</p>
-
-</body>
+  <head>
+    <meta charset="utf-8">
+    <script src="angular.min.js"></script>
+    <script src="app.js"></script>
+    <style>body { font-size: 1.3em; }</style>
+    <title>Luis Quintero Assignment 1</title>
+  </head>
+  <body ng-app="Luis_Assignment1">
+    <h1>Luis Quintero Assignment 1</h1>
+    <br>
+    <div ng-controller="Luis_Assignment1_controller1">
+      <div>
+        What do you usually eat for lunch
+        <input type="text" ng-model="lunch">
+        <br>
+        <button ng-click="ProcesarLunch()">Check If Too Much</button>
+      </div>
+      <div>{{Mensaje}}</div>
+    </div>
+  </body>
 </html>
