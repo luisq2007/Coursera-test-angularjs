@@ -1,23 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html ng-app='ShoppingListApp'>
   <head>
     <meta charset="utf-8">
     <script src="angular.min.js"></script>
     <script src="app.js"></script>
-    <style>body { font-size: 1.3em; }</style>
-    <title>Luis Quintero Assignment 1</title>
+    <link rel="stylesheet" href="styles.css">
+    <title>Custom Service</title>
   </head>
-  <body ng-app="Luis_Assignment1">
-    <h1>Luis Quintero Assignment 1</h1>
-    <br>
-    <div ng-controller="Luis_Assignment1_controller1">
-      <div>
-        What do you usually eat for lunch
-        <input type="text" ng-model="lunch">
-        <br>
-        <button ng-click="ProcesarLunch()">Check If Too Much</button>
+  <body>
+    <h1>"check off" shopping List application</h1>
+
+    <!-- LIST #1 - unlimited items -->
+    <div ng-controller='ShoppingListController'>
+      <div id="list1">
+      <h3>To Buy</h3>
+        <ol>
+          <li ng-repeat="item in shoppingList_compra">
+            Buy {{item.quantity}} {{item.name}}
+            <button ng-click="removeItem($index);">Remove Item</button>
+          </li>
+        </ol>
+        <div>{{Message_buy()}}</div>
       </div>
-      <div>{{Mensaje}}</div>
+
+      <div id="list2">
+        <h3>Already Bought</h3>
+        <ol>
+          <li ng-repeat="item in shoppingList_listo">
+            Bought {{item.quantity}} {{item.name}}
+          </li>
+        </ol>
+        <div>{{Message_bought()}}</div>
+      </div>
+
     </div>
   </body>
 </html>

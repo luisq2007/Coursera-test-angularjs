@@ -1,21 +1,76 @@
 (function () {
-	'use strict';
+'use strict';
 
-	angular.module('Luis_Assignment1', [])
+var shoppingList_compra = [
+  {
+    name: "Milk",
+    quantity: "2"
+  },
+  {
+    name: "Donuts",
+    quantity: "200"
+  },
+  {
+    name: "Cookies",
+    quantity: "300"
+  },
+  {
+    name: "Chocolate",
+    quantity: "5"
+  },
+  {
+    name: "Pretzel",
+    quantity: "7"
+  }
+];
 
-	.controller('Luis_Assignment1_controller1', function ($scope) {
-		$scope.ProcesarLunch = function () {
-			var arrayOfStrings = $scope.lunch.split(',');
-			if ((arrayOfStrings.length > 0) && (arrayOfStrings.length > 3) && $scope.lunch.length > 0){
-				$scope.Mensaje = "Too much!";
-			}else if ((arrayOfStrings.length > 0) && (arrayOfStrings.length <= 3) && $scope.lunch.length > 0){
-				$scope.Mensaje = "Enjoy!!";
-			}else {
-				$scope.Mensaje = "Please enter data first";
-			}
-		};
+var shoppingList_listo = [];
+angular.module('ShoppingListApp', [])
+.controller('ShoppingListController', ShoppingListController);
 
-	});
+ShoppingListController.$inject = ['$scope'];
+function ShoppingListController($scope) {
+  $scope.shoppingList_compra = shoppingList_compra;
+  $scope.shoppingList_listo = shoppingList_listo;
 
+  $scope.addToList = function () {
+    var newItem = {
+      name: $scope.newItemName,
+      quantity: $scope.newItemQuantity
+    };
+
+    
+  };
+
+  $scope.Message_buy = function () {
+    if(shoppingList_compra == 0) {
+      return "Everything is bought!"
+    }else {
+      return "";
+    }
+
+    
+  };
+  $scope.Message_bought = function () {
+    if (shoppingList_listo.length == 0){
+      return "Nothing bought yet";
+    }else {
+      return "";
+    }
+
+    
+  };
+
+  $scope.removeItem = function (itemIndex) {
+    
+    var newItem = {
+      name: shoppingList_compra[itemIndex].name,
+      quantity: shoppingList_compra[itemIndex].quantity
+    };
+    $scope.shoppingList_listo.push(newItem);
+    $scope.shoppingList_compra.splice(itemIndex, 1);
+
+  };
+}
 
 })();
