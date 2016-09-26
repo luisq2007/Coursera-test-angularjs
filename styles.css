@@ -3,7 +3,6 @@ body {
 }
 #list1, #list2 {
   float: left;
-  width: 40%;
 }
 #list2 {
   margin-left: 40px;
