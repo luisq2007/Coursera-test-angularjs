@@ -1,51 +1,99 @@
-(function () {
+ (function () {
 'use strict';
-  angular.module('ShoppingListCheckOff', [])
+	angular.module('NarrowItDownApp', [])
+	.controller('NarrowItDownController', NarrowItDownController)
+	.service('MenuSearchService', MenuSearchService)
+	.directive('foundItems', FoundItems)
+	.constant('ApiBasePath', "https://davids-restaurant.herokuapp.com/menu_items.json");
+	
 
-  .controller('ToBuyController', ToBuyController)
-  .controller('AlreadyBoughtController', AlreadyBoughtController)
-  .service('ShoppingListCheckOffService',ShoppingListCheckOffService);
+	function FoundItems() {
+		var ddo = {
+			templateUrl: 'template.html',
+			scope: {
+				foundElements: '<',
+				onRemove: '&'
+			},
+			controller: 'NarrowItDownController',
+			controllerAs: 'list',
+			bindToController: true
+		};
 
-  ToBuyController.$inject = ['ShoppingListCheckOffService'];
-  AlreadyBoughtController.$inject = ['ShoppingListCheckOffService'];
-
-  function ToBuyController(ShoppingListCheckOffService){
-    var buycontroller = this;
-    buycontroller.items = ShoppingListCheckOffService.getItems();
-
-    buycontroller.comprado = function(item){
-      ShoppingListCheckOffService.comprado(item);
-    };
-  }
-
+		return ddo;
+	}
 
 
-  function AlreadyBoughtController(ShoppingListCheckOffService){
-    var boughtcontroller = this;
-    boughtcontroller.boughtItems = ShoppingListCheckOffService.getBoughtItems();
-  }
 
-  function ShoppingListCheckOffService(){
-    var service = this;
-    service.comprar = [{name:'cookies',quantity:5},
-                      {name:'candy',quantity:7},
-                      {name:'Gummybears',quantity:12},
-                      {name:'chocolates',quantity:6},
-                      {name:'Pretzel',quantity:10}
-                    ];
+	NarrowItDownController.$inject = ['MenuSearchService'];
+	function NarrowItDownController(MenuSearchService) {
+		var elementos = this;
+		var call_made = false;
+		elementos.found = [];
+		elementos.buscar = function () {
+			call_made = true;
+			var promise = MenuSearchService.getMatchedMenuItems(elementos.frase);
+			
+			promise.then(function (response) {
+			  //console.log("el arreglo respuesta: ",response);
+			  elementos.found = response;
+			})
+			.catch(function (error) {
+			  //console.log(error);
+			})
+		};		
 
-    service.comprados = [];
+		elementos.removeItem = function (itemIndex) {
+			elementos.found.splice(itemIndex, 1);
+		};  
 
-    service.getItems = function(){ return service.comprar;}
-    service.getBoughtItems = function(){ return service.comprados;}
+		//elementos.listavacia = true;
+		elementos.listavacia = function () {
+			//console.log (call_made);
+			//console.log (elementos.frase);
+			//console.log ("prueba");
+			if (!call_made){
+				return false;
+			}else if ((elementos.found.length==0) || (elementos.frase == null) ){
+				//console.log (elementos.found.length);
+				//console.log (elementos.frase);
+				return true;
+			}else{
+				return false;
+			}
 
-    service.comprado = function(item){
-      var index = service.comprar.indexOf(item);
-      service.comprar.splice(index, 1);
+			
+		};
 
-      service.comprados.push(item);
-    };
+	}
 
-  };
+	MenuSearchService.$inject = ['$http', 'ApiBasePath']
+	function MenuSearchService($http, ApiBasePath) {
+		var service = this;
+		var elementos_encontrados=[];
+
+		service.getMatchedMenuItems = function (searchTerm) {
+			if (searchTerm != null){
+				searchTerm = searchTerm.toLowerCase();
+			}
+			var response = $http({
+			  method: "GET",
+			  url: (ApiBasePath)
+			}).then(function successCallback(response) {
+				var json_respuesta = response.data.menu_items;
+				elementos_encontrados=[];
+			    for (var i = 0; i < json_respuesta.length; i++) {
+					var name = json_respuesta[i].name;
+					if (name.toLowerCase().indexOf(searchTerm) !== -1) {
+						elementos_encontrados.push(json_respuesta[i]);
+					}
+			    }
+				return elementos_encontrados;
+			}, function errorCallback(response) {
+				
+			});
+			return response;
+		
+		};
+	}
 
 })();
